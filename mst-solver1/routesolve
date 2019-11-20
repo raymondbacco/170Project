@@ -1,0 +1,65 @@
+#!/usr/bin/env python
+from optparse import OptionParser
+
+usage = "usage: %prog [options] arg"
+parser = OptionParser(usage)
+parser.add_option("-f", "--file", dest="filename", help="read data from FILENAME")
+
+#filepath = "output"
+
+
+class Node:
+    def __init__(self, nodeID):
+        self.neighbors = []
+        self.nodeID = nodeID
+
+    def addNeighbor(self, nodeID):
+        if nodeID not in self.neighbors:
+            self.neighbors.append(nodeID)
+
+    def DFS(self):
+        visited.append(self.nodeID)
+        for neighborID in self.neighbors:
+            if neighborID not in visited:
+                vertices[neighborID].DFS()
+                visited.append(self.nodeID)
+
+vertices = {}
+
+visited = []
+edges = []
+startID = 0
+
+(options, args) = parser.parse_args()
+with open(options.filename) as fp:
+    line = fp.readline()   
+    cnt = 0
+    while line:
+        if cnt == 0:
+            line = fp.readline()   
+            cnt+=1
+            continue
+        if line != '\\n':
+            edge = line.split()
+            nodeID = edge[1]
+            neighborID = edge[2]
+            startID = nodeID
+            if nodeID not in vertices:
+                node = Node(nodeID)
+                vertices[nodeID] = node
+            if neighborID not in vertices:
+                node = Node(neighborID)
+                vertices[neighborID] = node
+            vertices[nodeID].addNeighbor(neighborID)
+            vertices[neighborID].addNeighbor(nodeID)
+        line = fp.readline()   
+        cnt+=1
+'''
+for id, node in vertices.items():
+    print("node {}".format(node.nodeID))
+    for neighborID in node.neighbors:
+        print("has neighbor {}".format(neighborID))
+'''
+
+vertices[startID].DFS()
+print(visited)
