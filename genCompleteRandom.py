@@ -1,3 +1,4 @@
+import sys
 import random
 import numpy as np
 import matplotlib.pyplot as plt
@@ -21,9 +22,9 @@ for k in range(num_points):
     point_arr.append(p)
     
 #print a cartisian plot
-for a in point_arr:
-    plt.scatter(a[0], a[1])
-plt.show()
+#for a in point_arr:
+#    plt.scatter(a[0], a[1])
+#plt.show()
 
 #create empty matrix nxn
 n = len(point_arr)
