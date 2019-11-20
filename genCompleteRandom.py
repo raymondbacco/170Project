@@ -47,8 +47,10 @@ for i in range(len(point_arr)):
 filename = str(num_points)+"CompleteAdj.in"
 
 f= open(filename,"w+")
+for q in range(5):
+    f.write("XXXXXX\n")
 
-#adjacency matrix
+#write adjacency matrix
 for y in range(len(matrix)):
     for x in range(len(matrix[y])):
         f.write((str(matrix[y][x])+" "))
