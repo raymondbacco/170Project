@@ -31,9 +31,9 @@ if(args.infile != None):
             #create edges
             if line[0] == "e":
                 l = line.split(" ")
-                u = int(l[1].strip())
-                v = int(l[2].strip())
-                w = int(l[3].strip())
+                u = float(l[1].strip())
+                v = float(l[2].strip())
+                w = float(l[3].strip())
                 edge = Edge(u, v, w)
                 edges.append(edge)
                 if u not in vertices:
@@ -47,9 +47,9 @@ else:
         #create edges
         if line[0] == "e":
             l = line.split(" ")
-            u = int(l[1].strip())
-            v = int(l[2].strip())
-            w = int(l[3].strip())
+            u = float(l[1].strip())
+            v = float(l[2].strip())
+            w = float(l[3].strip())
             edge = Edge(u, v, w)
             edges.append(edge)
             if u not in vertices:

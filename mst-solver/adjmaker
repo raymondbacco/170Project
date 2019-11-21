@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+
+from optparse import OptionParser
+
+usage = "usage: %prog [options] arg"
+parser = OptionParser(usage)
+parser.add_option("-f", "--file", dest="filename", help="read data from FILENAME")
+
+(options, args) = parser.parse_args()
+
+cnt = 0
+edgeList = []
+
+with open(options.filename) as fp:
+    line = fp.readline()   
+    while line:
+        if cnt == 0:
+            cnt += 1
+            line = fp.readline()   
+            continue
+        else:
+            edgeList.append(line.split())
+            line = fp.readline()   
+adjmatrix = []
+for i in range(len(edgeList) + 1):
+    adjmatrix.append(['x'] * (len(edgeList) + 1))
+for edge in edgeList:
+    i = int(float(edge[1]))
+    j = int(float(edge[2]))
+    adjmatrix[i][j] = str(edge[3])
+
+with open('adj_out.txt', 'w') as the_file:
+    s = " "
+    for i in range(len(adjmatrix)):
+        for j in range(len(adjmatrix)):
+            adjmatrix[j][i] = adjmatrix[i][j]
+    for line in adjmatrix:
+        newline = s.join(line)
+        the_file.write(newline + '\n')
+        #print(newline)
+    
+
+    
+#print(edgeList)
+#print(adjmatrix)
+            
+
+
