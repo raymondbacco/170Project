@@ -20,7 +20,7 @@ for u in range(num_nodes):
     readline = readline.split(" ")
     row = []
     for elem in readline:
-        if elem == "x":
+        if elem == 'x' or elem == "x\n":
             row.append(0)
         elif elem == ""or elem =='' or elem =='\n':
             None

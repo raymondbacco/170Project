@@ -54,7 +54,6 @@ class Graph:
             the_file.write(f'{self.vertices[self.startNode].name}\n')
             for i in range(self.nodeCount):
                 adjMatrix.append(['x'] * self.nodeCount)
-                #the_file.write(f'{" ".join(adjMatrix[i])}\n')
             for node in self.vertices:
                 for neighbor in node.neighbors:
                     adjMatrix[node.ID][neighbor.ID] = str(self.edgeWeights)
@@ -63,7 +62,7 @@ class Graph:
                     adjMatrix[j][i] = adjMatrix[i][j]
             for i in range(self.nodeCount):
                 the_file.write(f'{" ".join(adjMatrix[i])}\n')
-        print(routeNodes)
+        print(self.finalRouteNode.ID)
 
     def setHomeNode(self, node, numHomes):
         if self.homeCount < numHomes:

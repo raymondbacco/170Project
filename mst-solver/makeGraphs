@@ -38,8 +38,8 @@ for i in range(int(options.numNodes)):
         parentNode.dropNode = True
         for j in range(4):
             node = Nodex(names.get_first_name() + str(nextNodeID) , nextNodeID)
-            graph.setHomeNode(node, int(options.numHomes))
             nextNodeID += 1
+            graph.setHomeNode(node, int(options.numHomes))
             graph.addNode(node)
             parentNode.addNeighbor(node)
             node.addNeighbor(parentNode)
@@ -104,5 +104,5 @@ for i in range(int(options.numNodes)):
             node.addNeighbor(current)
             if graph.nodeCount >= int(options.numNodes):
                 break
-graph.printGraph()
+#graph.printGraph()
 graph.writeInputFile(options.filename)
