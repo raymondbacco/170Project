@@ -92,7 +92,7 @@ class Graph():
                         self.prev[v] = u 
   
         #self.printSolution(dist) 
-        print(self.prev)
+        #print(self.prev)
 
 g = Graph(num_nodes)
 g.graph =matrix
