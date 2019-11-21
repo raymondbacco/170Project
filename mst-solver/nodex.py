@@ -10,6 +10,7 @@ class Graph:
         self.startNode = 0
         self.lastRouteNode = 0
         self.edgeWeights = 16.0
+        self.adjMatrix = []
 
     def addNode(self, node):
         self.vertices.append(node)
@@ -60,8 +61,10 @@ class Graph:
             for i in range(len(adjMatrix)):
                 for j in range(len(adjMatrix)):
                     adjMatrix[j][i] = adjMatrix[i][j]
+            self.adjMatrix = adjMatrix
             for i in range(self.nodeCount):
                 the_file.write(f'{" ".join(adjMatrix[i])}\n')
+
         print(self.finalRouteNode.ID)
 
     def setHomeNode(self, node, numHomes):
@@ -76,6 +79,50 @@ class Graph:
         if self.foundHome != True:
             node.routeNode = True
             self.lastRouteNode = node
+
+    def dijkstra(self, start, end):
+        import sys
+        def minDistance( dist, sptSet): 
+        # Initilaize minimum distance for next node 
+        min = sys.maxsize
+        # Search not nearest vertex not in the  
+        # shortest path tree 
+        for v in range(self.nodeCount): 
+            if dist[v] < min and sptSet[v] == False: 
+                min = dist[v] 
+                min_index = v 
+        return min_index 
+        #dijkstra starts
+        dist = [sys.maxsize] * self.nodeCount 
+        dist[start] = 0
+        sptSet = [False] * self.nodeCount 
+        prev = [0 for column in range(self.nodeCount)] 
+        for cout in range(self.nodeCount): 
+            # Pick the minimum distance vertex from  
+            # the set of vertices not yet processed.  
+            # u is always equal to src in first iteration 
+            u = minDistance(dist, sptSet) 
+            # Put the minimum distance vertex in the  
+            # shotest path tree 
+            sptSet[u] = True
+            # Update dist value of the adjacent vertices  
+            # of the picked vertex only if the current  
+            # distance is greater than new distance and 
+            # the vertex in not in the shotest path tree 
+            for v in range(self.nodeCount): 
+                if (self.adjMatrix[u][v] > 0 and sptSet[v] == False and dist[v] > dist[u] + self.adjMatrix[u][v]): 
+                        dist[v] = dist[u] + self.adjMatrix[u][v]
+                        prev[v] = u 
+        p = [end]
+        while end != start:
+            p.append(prev[end])
+            end = prev[end]
+        q = list(reversed(p))
+        for w in range(len(q)):
+            q[w] = self.vertices[w].name
+        return q
+        #print(path_string)
+
 
 class Nodex:
     def __init__(self, name, ID):
