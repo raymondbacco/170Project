@@ -84,14 +84,14 @@ class Graph:
         import sys
         def minDistance( dist, sptSet): 
         # Initilaize minimum distance for next node 
-        min = sys.maxsize
+            min = sys.maxsize
         # Search not nearest vertex not in the  
         # shortest path tree 
-        for v in range(self.nodeCount): 
-            if dist[v] < min and sptSet[v] == False: 
-                min = dist[v] 
-                min_index = v 
-        return min_index 
+            for v in range(self.nodeCount): 
+                if dist[v] < min and sptSet[v] == False: 
+                    min = dist[v] 
+                    min_index = v 
+            return min_index 
         #dijkstra starts
         dist = [sys.maxsize] * self.nodeCount 
         dist[start] = 0
