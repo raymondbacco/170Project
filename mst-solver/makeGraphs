@@ -1,12 +1,11 @@
-#!/usr/bin/env python
-
+#!/usr/bin/env python3
 
 from nodex import Nodex
 from nodex import Graph
 import names
 
 edgeWeight = 16.0
-nextNodeID = 0.0
+nextNodeID = 0
 finalHomeNode = 0
 
 graph = Graph("gen_graph")
@@ -25,105 +24,85 @@ parser.add_option("-s", "--homes", dest="numHomes", help="number of homes")
 for i in range(int(options.numNodes)):
     if graph.nodeCount >= int(options.numNodes):
         break
-    parentNode = Nodex(names.get_first_name(), nextNodeID)
-    parentNode.routeNode = True
-    if i != 0:
-        lastNode.addNegihbor(parentNode)
-        parentNode.addNegihbor(lastNode)
-    lastNode = parentNode
+    parentNode = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
     nextNodeID+=1
+    graph.setRouteNode(parentNode)
+    if i != 0:
+        lastNode.addNeighbor(parentNode)
+        parentNode.addNeighbor(lastNode)
+    lastNode = parentNode
     graph.addNode(parentNode)
     if graph.nodeCount >= int(options.numNodes):
         break
     if i % 5 == 0:
         parentNode.dropNode = True
         for j in range(4):
-            node = Nodex(names.get_first_name(), nextNodeID)
-            if graph.homeCount < int(options.numHomes):
-                node.homeNode = True
-                graph.homeCount+=1
-                if graph.homeCount == int(options.numHomes):
-                    graph.finalHomeNode = node.ID
+            node = Nodex(names.get_first_name() + str(nextNodeID) , nextNodeID)
+            graph.setHomeNode(node, int(options.numHomes))
             nextNodeID += 1
             graph.addNode(node)
-            parentNode.addNegihbor(node)
-            node.addNegihbor(parentNode)
+            parentNode.addNeighbor(node)
+            node.addNeighbor(parentNode)
             if graph.nodeCount >= int(options.numNodes):
                 break
     elif i % 5 == 1:
         current = parentNode
         for j in range(3):
-            node = Nodex(names.get_first_name(), nextNodeID)
-            if graph.homeCount < int(options.numHomes):
-                node.homeNode = True
-                graph.homeCount+=1
-                if graph.homeCount == int(options.numHomes):
-                    graph.finalHomeNode = node.ID
-            node.routeNode = True
+            node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
             nextNodeID += 1
+            graph.setHomeNode(node, int(options.numHomes))
+            graph.setRouteNode(node)
             graph.addNode(node)
-            current.addNegihbor(node)
-            node.addNegihbor(current)
+            current.addNeighbor(node)
+            node.addNeighbor(current)
             current = node
             if graph.nodeCount >= int(options.numNodes):
                 break
     elif i % 5 == 2:
         current = parentNode
         for j in range(2):
-            node = Nodex(names.get_first_name(), nextNodeID)
-            if graph.homeCount < int(options.numHomes):
-                node.homeNode = True
-                graph.homeCount+=1
-                if graph.homeCount == int(options.numHomes):
-                    graph.finalHomeNode = node.ID
-            if j == 0:
-                node.routeNode = True
-                node.dropNode = True
+            node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
             nextNodeID += 1
+            graph.setHomeNode(node, int(options.numHomes))
+            if j == 0:
+                graph.setRouteNode(node)
+                node.dropNode = True
             graph.addNode(node)
-            current.addNegihbor(node)
-            node.addNegihbor(current)
+            current.addNeighbor(node)
+            node.addNeighbor(current)
             current = node
             if graph.nodeCount >= int(options.numNodes):
                 break
     elif i % 5 == 3:
         parentNode.dropNode = True
-        node = Nodex(names.get_first_name(), nextNodeID)
-        if graph.homeCount < int(options.numHomes):
-            node.homeNode = True
-            graph.homeCount+=1
-            if graph.homeCount == int(options.numHomes):
-                graph.finalHomeNode = node.ID
+        node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
         nextNodeID += 1
+        graph.setHomeNode(node, int(options.numHomes))
         graph.addNode(node)
-        parentNode.addNegihbor(node)
-        node.addNegihbor(parentNode)
+        parentNode.addNeighbor(node)
+        node.addNeighbor(parentNode)
     else:
         current = parentNode
         for j in range(2):
-            node = Nodex(names.get_first_name(), nextNodeID)
-            if j == 0:
-                node.routeNode = True
-                node.dropNode = True
+            node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
             nextNodeID += 1
+            if j == 0:
+                graph.setRouteNode(node)
+                node.dropNode = True
             graph.addNode(node)
-            current.addNegihbor(node)
-            node.addNegihbor(current)
+            current.addNeighbor(node)
+            node.addNeighbor(current)
             current = node
             if graph.nodeCount >= int(options.numNodes):
                 break
         for j in range(2):
-            node = Nodex(names.get_first_name(), nextNodeID)
-            if graph.homeCount < int(options.numHomes):
-                node.homeNode = True
-                graph.homeCount+=1
-                if graph.homeCount == int(options.numHomes):
-                    graph.finalHomeNode = node.ID
+            node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
             nextNodeID += 1
+            graph.setHomeNode(node, int(options.numHomes))
             graph.addNode(node)
-            current.addNegihbor(node)
-            node.addNegihbor(current)
+            current.addNeighbor(node)
+            node.addNeighbor(current)
             if graph.nodeCount >= int(options.numNodes):
                 break
 graph.printGraph()
-graph.writeInputFile("dumy")
+graph.writeInputFile(options.filename)
