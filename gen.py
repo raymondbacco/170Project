@@ -84,8 +84,8 @@ for w in home_arr:
 	home_string+=(w+" ") 
 
 #generate random adjacency matrix
-#g = random_adjacency_matrix(n)
-g = completeMatrix(n)
+g = random_adjacency_matrix(n)
+#g = completeMatrix(n)
 
 
 # set all zeros to x

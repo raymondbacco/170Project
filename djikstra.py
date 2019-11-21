@@ -20,7 +20,7 @@ for u in range(num_nodes):
     readline = readline.split(" ")
     row = []
     for elem in readline:
-        if elem == 'x' or elem == "x\n":
+        if elem == "x":
             row.append(0)
         elif elem == ""or elem =='' or elem =='\n':
             None
@@ -96,7 +96,7 @@ class Graph():
 
 g = Graph(num_nodes)
 g.graph =matrix
-g.dijkstra(0)
+
 #print(g.prev)
 
 try:
@@ -107,6 +107,7 @@ except:
     path=False
 
 if path:
+    g.dijkstra(start)
     p = [end]
     while end != start:
         p.append(g.prev[end])
