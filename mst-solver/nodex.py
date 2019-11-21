@@ -63,6 +63,7 @@ class Graph:
                     adjMatrix[j][i] = adjMatrix[i][j]
             for i in range(self.nodeCount):
                 the_file.write(f'{" ".join(adjMatrix[i])}\n')
+        print(routeNodes)
 
     def setHomeNode(self, node, numHomes):
         if self.homeCount < numHomes:
