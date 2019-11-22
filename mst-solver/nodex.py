@@ -11,6 +11,7 @@ class Graph:
         self.lastRouteNode = 0
         self.edgeWeights = 16.0
         self.adjMatrix = []
+        self.dijkstraRoute = []
 
     def addNode(self, node):
         self.vertices.append(node)
@@ -61,9 +62,9 @@ class Graph:
             for i in range(len(adjMatrix)):
                 for j in range(len(adjMatrix)):
                     adjMatrix[j][i] = adjMatrix[i][j]
-            self.adjMatrix = adjMatrix
             for i in range(self.nodeCount):
                 the_file.write(f'{" ".join(adjMatrix[i])}\n')
+            self.adjMatrix = adjMatrix
 
         print(self.finalRouteNode.ID)
 
@@ -82,45 +83,79 @@ class Graph:
 
     def dijkstra(self, start, end):
         import sys
+
         def minDistance( dist, sptSet): 
         # Initilaize minimum distance for next node 
             min = sys.maxsize
-        # Search not nearest vertex not in the  
-        # shortest path tree 
-            for v in range(self.nodeCount): 
+            # Search not nearest vertex not in the  
+            # shortest path tree 
+            #print(self.nodeCount)
+            for v in range(self.nodeCount):
+                #print(str(dist[v] < min)+" "+str(sptSet[v] == False)) 
                 if dist[v] < min and sptSet[v] == False: 
                     min = dist[v] 
                     min_index = v 
-            return min_index 
+            return min_index
+
         #dijkstra starts
         dist = [sys.maxsize] * self.nodeCount 
         dist[start] = 0
         sptSet = [False] * self.nodeCount 
-        prev = [0 for column in range(self.nodeCount)] 
+        prev = [0 for column in range(self.nodeCount)]
+
+        matrix=[]
+        for u in self.adjMatrix:
+            row = []
+            for elem in u:
+                if elem == "x" or elem == "x\n":
+                    row.append(0)
+                elif elem == ""or elem =='' or elem =='\n':
+                    None
+                else:
+                    #print(elem)
+                    row.append(float(elem))
+            matrix.append(row)
+                #rint(row)
+        #rint (matrix)
         for cout in range(self.nodeCount): 
             # Pick the minimum distance vertex from  
             # the set of vertices not yet processed.  
-            # u is always equal to src in first iteration 
+            # u is always equal to src in first iteration
+
             u = minDistance(dist, sptSet) 
             # Put the minimum distance vertex in the  
             # shotest path tree 
             sptSet[u] = True
+
             # Update dist value of the adjacent vertices  
             # of the picked vertex only if the current  
             # distance is greater than new distance and 
             # the vertex in not in the shotest path tree 
-            for v in range(self.nodeCount): 
-                if (self.adjMatrix[u][v] > 0 and sptSet[v] == False and dist[v] > dist[u] + self.adjMatrix[u][v]): 
-                        dist[v] = dist[u] + self.adjMatrix[u][v]
+            for v in range(self.nodeCount):
+                #print(self.adjMatrix)
+                if (matrix[u][v] > 0 and sptSet[v] == False and dist[v] > dist[u] + matrix[u][v]): 
+                        dist[v] = dist[u] + matrix[u][v]
                         prev[v] = u 
+        
+
+        #print path
+        #print(start)
+        #print(end)
+        #print(prev)
         p = [end]
+        #print(prev[end])
         while end != start:
+            #print(prev[end])
             p.append(prev[end])
             end = prev[end]
+        #print(p)
         q = list(reversed(p))
-        for w in range(len(q)):
-            q[w] = self.vertices[w].name
-        return q
+        #print(q)
+        ind=0
+        for w in q:
+            q[ind] = self.vertices[w].name
+            ind+=1
+        self.dijkstraRoute = q
         #print(path_string)
 
 

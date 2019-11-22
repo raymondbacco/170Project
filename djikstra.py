@@ -55,11 +55,13 @@ class Graph():
   
         # Search not nearest vertex not in the  
         # shortest path tree 
-        for v in range(self.V): 
+        for v in range(self.V):
+            #this if should always work?
+            print(self.V) 
             if dist[v] < min and sptSet[v] == False: 
                 min = dist[v] 
                 min_index = v 
-  
+        #print(min_index)
         return min_index 
   
     # Funtion that implements Dijkstra's single source  

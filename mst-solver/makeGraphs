@@ -106,3 +106,5 @@ for i in range(int(options.numNodes)):
                 break
 #graph.printGraph()
 graph.writeInputFile(options.filename)
+graph.dijkstra(38,0)
+print(graph.dijkstraRoute)
