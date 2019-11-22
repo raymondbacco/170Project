@@ -8,7 +8,7 @@ class Graph:
         self.foundHome = False
         self.homeCount = 0
         self.finalHomeNode = 0
-        self.finalRouteNode = 0
+        self.finalRouteNode = None
         self.startNode = 0
         self.lastRouteNode = 0
         self.edgeWeights = 16.0
@@ -16,7 +16,8 @@ class Graph:
         self.initRoute = []
         self.dijkstraRoute = []
         self.totalRoute = []
-        self.dropped = {}
+        self.droppedAt = {}
+        self.newTotalRoute = []
 
     def addNode(self, node):
         self.vertices.append(node)
@@ -56,7 +57,7 @@ class Graph:
         print(routeNodes)
         self.initRoute = routeNodes
             
-        with open(filename, 'w') as the_file:
+        with open(f'{filename}.in', 'w') as the_file:
             the_file.write(f'{self.nodeCount}\n')
             the_file.write(f'{self.homeCount}\n')
             the_file.write(f'{" ".join(vertexNames)}\n')
@@ -75,12 +76,12 @@ class Graph:
             self.adjMatrix = adjMatrix
 
         print(self.finalRouteNode.ID)
-    def writeOutputFile(self):
-        with open("testoutfile", 'w') as the_file:
+    def writeOutputFile(self, filename):
+        with open(f'{filename}.out', 'w') as the_file:
             the_file.write(f'{" ".join(self.totalRoute)}\n')
-            the_file.write(f'{len(self.dropped)}\n')
-            for location, droppedNames in self.dropped.items():
-                the_file.write(f'{location} {" ".join(droppedNames)}\n')
+            the_file.write(f'{len(self.droppedAt)}\n')
+            for location, droppedAtNames in self.droppedAt.items():
+                the_file.write(f'{location} {" ".join(droppedAtNames)}\n')
 
         return
 
@@ -92,10 +93,18 @@ class Graph:
                 self.foundHome = True
                 self.finalHomeNode = node.ID
                 self.finalRouteNode = self.lastRouteNode
+    '''
     def setRouteNode(self, node):
         if self.foundHome != True:
             node.routeNode = True
             self.lastRouteNode = node
+    '''
+    def addRouteNode(self, node):
+        if self.foundHome != True:
+            node.routeNode = True
+            self.lastRouteNode = node
+            self.newTotalRoute.append(node.name)
+    
 
     def dijkstra(self, start, end):
 

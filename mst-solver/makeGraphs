@@ -7,7 +7,7 @@ import names
 edgeWeight = 16.0
 nextNodeID = 0
 finalHomeNode = 0
-droppedAt = {}
+numDropped = 0
 
 graph = Graph("gen_graph")
 
@@ -28,7 +28,7 @@ for i in range(int(options.numNodes)):
         break
     parentNode = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
     nextNodeID+=1
-    graph.setRouteNode(parentNode)
+    graph.addRouteNode(parentNode)
     if i != 0:
         lastNode.addNeighbor(parentNode)
         parentNode.addNeighbor(lastNode)
@@ -38,12 +38,14 @@ for i in range(int(options.numNodes)):
         break
     if i % 5 == 0:
         parentNode.dropNode = True
-        droppedAt[parentNode.name] = []
+        if numDropped < int(options.numHomes):
+            graph.droppedAt[parentNode.name] = []
         for j in range(4):
             node = Nodex(names.get_first_name() + str(nextNodeID) , nextNodeID)
             nextNodeID += 1
-            droppedAt[parentNode.name].append(node.name)
-
+            if numDropped < int(options.numHomes):
+                graph.droppedAt[parentNode.name].append(node.name)
+                numDropped+=1
             graph.setHomeNode(node, int(options.numHomes))
             graph.addNode(node)
             parentNode.addNeighbor(node)
@@ -52,21 +54,30 @@ for i in range(int(options.numNodes)):
                 break
     elif i % 5 == 1:
         current = parentNode
+        localRoute = []
+        localRoute.append(parentNode.name)
         for j in range(3):
             node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
             node.dropNode = True
-            droppedAt[node.name] = []
-            droppedAt[node.name].append(node.name)
+            if numDropped < int(options.numHomes):
+                graph.droppedAt[node.name] = []
+                graph.droppedAt[node.name].append(node.name)
+                numDropped+=1
             nextNodeID += 1
             graph.setHomeNode(node, int(options.numHomes))
-
-            graph.setRouteNode(node)
+            
+            if graph.foundHome != True:
+                localRoute.append(node.name)
+            if j != 2:
+                graph.addRouteNode(node)
             graph.addNode(node)
             current.addNeighbor(node)
             node.addNeighbor(current)
             current = node
             if graph.nodeCount >= int(options.numNodes):
                 break
+        localRoute.reverse() 
+        graph.newTotalRoute += localRoute
     elif i % 5 == 2:
         current = parentNode
         for j in range(2):
@@ -74,13 +85,17 @@ for i in range(int(options.numNodes)):
             nextNodeID += 1
             graph.setHomeNode(node, int(options.numHomes))
             if j == 0:
-                graph.setRouteNode(node)
+                graph.addRouteNode(node)
+                graph.addRouteNode(parentNode)
                 node.dropNode = True
-                droppedAt[node.name] = []
-                droppedAt[node.name].append(node.name)
+                if numDropped < int(options.numHomes):
+                    graph.droppedAt[node.name] = []
+                    graph.droppedAt[node.name].append(node.name)
+                    numDropped+=1
                 prevName = node.name
             if j == 1:
-                droppedAt[prevName].append(node.name)
+                if numDropped < int(options.numHomes):
+                    graph.droppedAt[prevName].append(node.name)
             graph.addNode(node)
             current.addNeighbor(node)
             node.addNeighbor(current)
@@ -91,8 +106,10 @@ for i in range(int(options.numNodes)):
         parentNode.dropNode = True
         node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
         nextNodeID += 1
-        droppedAt[parentNode.name] = []
-        droppedAt[parentNode.name].append(node.name)
+        if numDropped < int(options.numHomes):
+            graph.droppedAt[parentNode.name] = []
+            graph.droppedAt[parentNode.name].append(node.name)
+            numDropped+=1
         graph.setHomeNode(node, int(options.numHomes))
         graph.addNode(node)
         parentNode.addNeighbor(node)
@@ -104,9 +121,12 @@ for i in range(int(options.numNodes)):
             node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
             nextNodeID += 1
             if j == 0:
-                graph.setRouteNode(node)
+                graph.addRouteNode(node)
+                graph.addRouteNode(parentNode)
                 node.dropNode = True
-                droppedAt[node.name] = []
+                if numDropped < int(options.numHomes):
+                    graph.droppedAt[node.name] = []
+                    numDropped+=1
                 dropName = node.name
             graph.addNode(node)
             current.addNeighbor(node)
@@ -117,24 +137,26 @@ for i in range(int(options.numNodes)):
         for j in range(2):
             node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
             nextNodeID += 1
-            droppedAt[dropName].append(node.name)
+            if numDropped < int(options.numHomes):
+                graph.droppedAt[dropName].append(node.name)
+                numDropped+=1
             graph.setHomeNode(node, int(options.numHomes))
             graph.addNode(node)
             current.addNeighbor(node)
             node.addNeighbor(current)
             if graph.nodeCount >= int(options.numNodes):
                 break
-#graph.printGraph()
+
+graph.newTotalRoute = graph.newTotalRoute[:-2]
 graph.writeInputFile(options.filename)
 graph.dijkstra(int(options.dijkStart),0)
-
-
 graph.initRoute.remove(graph.finalRouteNode.name)
-graph.totalRoute = graph.initRoute + graph.dijkstraRoute
-graph.dropped = droppedAt
+graph.totalRoute = graph.newTotalRoute + graph.dijkstraRoute
+
 print(graph.totalRoute)
+print(f'fixed route{graph.newTotalRoute}')
 
-graph.writeOutputFile()
+graph.writeOutputFile(options.filename)
 
-for k, v in droppedAt.items():
+for k, v in graph.droppedAt.items():
     print(f'{k}:{v}\n')
