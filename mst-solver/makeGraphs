@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from nodex import Nodex
 from nodex import Graph
@@ -7,6 +7,7 @@ import names
 edgeWeight = 16.0
 nextNodeID = 0
 finalHomeNode = 0
+droppedAt = {}
 
 graph = Graph("gen_graph")
 
@@ -17,6 +18,7 @@ parser = OptionParser(usage)
 parser.add_option("-f", "--file", dest="filename", help="read data from FILENAME")
 parser.add_option("-n", "--nodes", dest="numNodes", help="number of nodes in graph")
 parser.add_option("-s", "--homes", dest="numHomes", help="number of homes")
+parser.add_option("-x", "--start", dest="dijkStart", help="dijkStart")
 
 (options, args) = parser.parse_args()
 
@@ -36,9 +38,12 @@ for i in range(int(options.numNodes)):
         break
     if i % 5 == 0:
         parentNode.dropNode = True
+        droppedAt[parentNode.name] = []
         for j in range(4):
             node = Nodex(names.get_first_name() + str(nextNodeID) , nextNodeID)
             nextNodeID += 1
+            droppedAt[parentNode.name].append(node.name)
+
             graph.setHomeNode(node, int(options.numHomes))
             graph.addNode(node)
             parentNode.addNeighbor(node)
@@ -49,8 +54,12 @@ for i in range(int(options.numNodes)):
         current = parentNode
         for j in range(3):
             node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
+            node.dropNode = True
+            droppedAt[node.name] = []
+            droppedAt[node.name].append(node.name)
             nextNodeID += 1
             graph.setHomeNode(node, int(options.numHomes))
+
             graph.setRouteNode(node)
             graph.addNode(node)
             current.addNeighbor(node)
@@ -67,6 +76,11 @@ for i in range(int(options.numNodes)):
             if j == 0:
                 graph.setRouteNode(node)
                 node.dropNode = True
+                droppedAt[node.name] = []
+                droppedAt[node.name].append(node.name)
+                prevName = node.name
+            if j == 1:
+                droppedAt[prevName].append(node.name)
             graph.addNode(node)
             current.addNeighbor(node)
             node.addNeighbor(current)
@@ -77,18 +91,23 @@ for i in range(int(options.numNodes)):
         parentNode.dropNode = True
         node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
         nextNodeID += 1
+        droppedAt[parentNode.name] = []
+        droppedAt[parentNode.name].append(node.name)
         graph.setHomeNode(node, int(options.numHomes))
         graph.addNode(node)
         parentNode.addNeighbor(node)
         node.addNeighbor(parentNode)
     else:
         current = parentNode
+        dropName = ""
         for j in range(2):
             node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
             nextNodeID += 1
             if j == 0:
                 graph.setRouteNode(node)
                 node.dropNode = True
+                droppedAt[node.name] = []
+                dropName = node.name
             graph.addNode(node)
             current.addNeighbor(node)
             node.addNeighbor(current)
@@ -98,6 +117,7 @@ for i in range(int(options.numNodes)):
         for j in range(2):
             node = Nodex(names.get_first_name() + str(nextNodeID), nextNodeID)
             nextNodeID += 1
+            droppedAt[dropName].append(node.name)
             graph.setHomeNode(node, int(options.numHomes))
             graph.addNode(node)
             current.addNeighbor(node)
@@ -106,5 +126,15 @@ for i in range(int(options.numNodes)):
                 break
 #graph.printGraph()
 graph.writeInputFile(options.filename)
-graph.dijkstra(38,0)
-print(graph.dijkstraRoute)
+graph.dijkstra(int(options.dijkStart),0)
+
+
+graph.initRoute.remove(graph.finalRouteNode.name)
+graph.totalRoute = graph.initRoute + graph.dijkstraRoute
+graph.dropped = droppedAt
+print(graph.totalRoute)
+
+graph.writeOutputFile()
+
+for k, v in droppedAt.items():
+    print(f'{k}:{v}\n')

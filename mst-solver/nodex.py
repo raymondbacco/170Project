@@ -1,3 +1,5 @@
+import sys
+
 class Graph:
     def __init__(self, name):
         self.name = name
@@ -11,7 +13,10 @@ class Graph:
         self.lastRouteNode = 0
         self.edgeWeights = 16.0
         self.adjMatrix = []
+        self.initRoute = []
         self.dijkstraRoute = []
+        self.totalRoute = []
+        self.dropped = {}
 
     def addNode(self, node):
         self.vertices.append(node)
@@ -44,10 +49,13 @@ class Graph:
         s = " "
         for node in self.vertices:
             if node.routeNode:
-                routeNodes.append([node.ID, node.name])
+                routeNodes.append(node.name)
             if node.homeNode:
                 homeNames.append(node.name)
             vertexNames.append(node.name)
+        print(routeNodes)
+        self.initRoute = routeNodes
+            
         with open(filename, 'w') as the_file:
             the_file.write(f'{self.nodeCount}\n')
             the_file.write(f'{self.homeCount}\n')
@@ -67,6 +75,14 @@ class Graph:
             self.adjMatrix = adjMatrix
 
         print(self.finalRouteNode.ID)
+    def writeOutputFile(self):
+        with open("testoutfile", 'w') as the_file:
+            the_file.write(f'{" ".join(self.totalRoute)}\n')
+            the_file.write(f'{len(self.dropped)}\n')
+            for location, droppedNames in self.dropped.items():
+                the_file.write(f'{location} {" ".join(droppedNames)}\n')
+
+        return
 
     def setHomeNode(self, node, numHomes):
         if self.homeCount < numHomes:
@@ -82,7 +98,6 @@ class Graph:
             self.lastRouteNode = node
 
     def dijkstra(self, start, end):
-        import sys
 
         def minDistance( dist, sptSet): 
         # Initilaize minimum distance for next node 
