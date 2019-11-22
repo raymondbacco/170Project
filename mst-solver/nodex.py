@@ -13,13 +13,20 @@ class Graph:
         self.lastRouteNode = 0
         self.edgeWeights = 16.0
         self.adjMatrix = []
-        self.initRoute = []
         self.dijkstraRoute = []
         self.totalRoute = []
         self.droppedAt = {}
         self.newTotalRoute = []
 
     def addNode(self, node):
+        self.vertices.append(node)
+        if self.nodeCount == 0:
+            self.startNode = node.ID
+        self.nodeCount += 1
+
+    def addNodeNeighbors(self,node, parentNode):
+        parentNode.addNeighbor(node)
+        node.addNeighbor(parentNode)
         self.vertices.append(node)
         if self.nodeCount == 0:
             self.startNode = node.ID
@@ -43,19 +50,14 @@ class Graph:
 
 
     def writeInputFile(self, filename):
-        routeNodes = []
         homeNames = []
         vertexNames = []
         adjMatrix = []
         s = " "
         for node in self.vertices:
-            if node.routeNode:
-                routeNodes.append(node.name)
             if node.homeNode:
                 homeNames.append(node.name)
             vertexNames.append(node.name)
-        print(routeNodes)
-        self.initRoute = routeNodes
             
         with open(f'{filename}.in', 'w') as the_file:
             the_file.write(f'{self.nodeCount}\n')
@@ -93,12 +95,7 @@ class Graph:
                 self.foundHome = True
                 self.finalHomeNode = node.ID
                 self.finalRouteNode = self.lastRouteNode
-    '''
-    def setRouteNode(self, node):
-        if self.foundHome != True:
-            node.routeNode = True
-            self.lastRouteNode = node
-    '''
+
     def addRouteNode(self, node):
         if self.foundHome != True:
             node.routeNode = True
@@ -113,9 +110,7 @@ class Graph:
             min = sys.maxsize
             # Search not nearest vertex not in the  
             # shortest path tree 
-            #print(self.nodeCount)
             for v in range(self.nodeCount):
-                #print(str(dist[v] < min)+" "+str(sptSet[v] == False)) 
                 if dist[v] < min and sptSet[v] == False: 
                     min = dist[v] 
                     min_index = v 
@@ -136,11 +131,8 @@ class Graph:
                 elif elem == ""or elem =='' or elem =='\n':
                     None
                 else:
-                    #print(elem)
                     row.append(float(elem))
             matrix.append(row)
-                #rint(row)
-        #rint (matrix)
         for cout in range(self.nodeCount): 
             # Pick the minimum distance vertex from  
             # the set of vertices not yet processed.  
@@ -156,31 +148,19 @@ class Graph:
             # distance is greater than new distance and 
             # the vertex in not in the shotest path tree 
             for v in range(self.nodeCount):
-                #print(self.adjMatrix)
                 if (matrix[u][v] > 0 and sptSet[v] == False and dist[v] > dist[u] + matrix[u][v]): 
                         dist[v] = dist[u] + matrix[u][v]
                         prev[v] = u 
-        
-
-        #print path
-        #print(start)
-        #print(end)
-        #print(prev)
         p = [end]
-        #print(prev[end])
         while end != start:
-            #print(prev[end])
             p.append(prev[end])
             end = prev[end]
-        #print(p)
         q = list(reversed(p))
-        #print(q)
         ind=0
         for w in q:
             q[ind] = self.vertices[w].name
             ind+=1
         self.dijkstraRoute = q
-        #print(path_string)
 
 
 class Nodex:
@@ -190,7 +170,6 @@ class Nodex:
         self.neighbors = []
         self.neighborCount = 0
         self.routeNode = False
-        self.dropNode = False
         self.homeNode = False
     def addNeighbor(self, node):
         self.neighbors.append(node)
