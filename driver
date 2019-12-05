@@ -1,10 +1,10 @@
-#!/usr/bin/env python3
-
+#!/usr/bin/env python
 
 from optparse import OptionParser
 import subprocess
 import networkx as nx
 import matplotlib.pyplot as plt
+import queue
 
 
 usage = "usage: %prog [options] arg"
@@ -14,15 +14,23 @@ parser.add_option("-f", "--file", dest="filename", help="read data from FILENAME
 
 (options, args) = parser.parse_args()
 
-with open(f'{options.filename}.in') as fp:
+with open(f'phase_1_inputs/inputs/{options.filename}.in') as fp:
     numberVertices = fp.readline()   
+    #numberVertices = numberVertices[:len(numberVertices)-1]
+    numberVertices = numberVertices.replace("\n", "")
     numberHomes = fp.readline()   
+    #numberHomes =  numberHomes[:len(numberHomes)-1]  
+    numberHomes = numberHomes.replace("\n", "")
     line = fp.readline()   
     nodes = line.split()
     line = fp.readline()
     homes = line.split()
+    start = fp.readline()
+    start = start.replace("\n", "")
+    start = start.replace(" ", "")
+#print(homes)
 
-subprocess.run(["./mst-solver/mstformatter", "-f", f'{options.filename}.in'])
+subprocess.run(["./mst-solver/mstformatter", "-f", f'phase_1_inputs/inputs/{options.filename}.in'])
 
 edges = []
 with open("mst_input.txt") as fp:
@@ -40,31 +48,68 @@ G.add_weighted_edges_from(edges)
 #plt.show()
 totalPath = []
 path = dict(nx.all_pairs_shortest_path(G))
-firstHome = homes[0]
-lastHome = homes[len(homes)-1]
-for i in range(len(homes)):
-    if i == len(homes) - 1:
-        currPath = path[homes[i]][homes[0]]
+q = queue.Queue()
+
+curr = start
+print(curr)
+#print(homes)
+for home in homes:
+    q.put(home)
+while not q.empty():
+    nextHome = q.get()
+    if nextHome != start:
+        currPath = path[curr][nextHome]
         for node in currPath:
-            totalPath.append(f'{node}')
-    else:
-        currPath = path[homes[i]][homes[i+1]]
-        for node in currPath:
-            totalPath.append(f'{node}')
-#clean the path
-prev = None
-for home in totalPath:
-    if home == prev:
-        totalPath.remove(home)
-    prev = home
+            if node != nextHome:
+                totalPath.append(f'{node}')
+        curr = nextHome
 
-with open(f'{options.filename}.out') as fp:
+currPath = path[curr][start]
+for node in currPath:
+    totalPath.append(f'{node}')
 
-
-
-
+#for i in range(len(homes)):
+    #nextNode = homes[i]
+#
+    #if i < len(homes) - 1:
+        #print(f'final node{}'')
+        #currPath = path[currNode][nextNode]
+        #for node in currPath:
+            #if node != nextNode:
+                #totalPath.append(f'{node}')
+        #currNode = nextNode 
+    ##else:
+        #currPath = path[currNode][start]
+        #for node in currPath:
+            #totalPath.append(f'{node}')
 
 print(totalPath)
+
+dropped = []
+dropCounts = 0
+
+#f'{filename}.out', 'w')
+filePath = f'./outputs/{options.filename}.out' 
+with open(filePath, 'w') as fp:
+    fp.write(f'{" ".join(totalPath)}\n')
+    for home in totalPath:
+        if home in homes and home not in dropped:
+            dropped.append(home)
+            dropCounts += 1
+    assert dropCounts == int(numberHomes), "didn't drop everyone off"
+    fp.write(f'{dropCounts}\n')
+    dropped = []
+    for home in totalPath:
+        if home in homes and home not in dropped:
+            dropped.append(home)
+            fp.write(f'{home} {home}\n') 
+
+
+
+
+
+
+#print(totalPath)
 
 
 

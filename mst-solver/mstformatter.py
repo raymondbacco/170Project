@@ -1,0 +1,36 @@
+
+#from optparse import OptionParser
+import sys
+filename = str(sys.argv[1])
+
+numlines = 0
+#usage = "usage: %prog [options] arg"
+#parser = OptionParser(usage)
+#parser.add_option("-f", "--file", dest="filename", help="read data from FILENAME")
+adjMatrix = []
+nodes = []
+#(options, args) = parser.parse_args()
+with open(filename) as fp:
+    line = fp.readline()   
+    cnt = 0
+    while line:
+        if cnt < 5:
+            if cnt == 2:
+                nodes = line.split()
+            cnt+=1
+            line = fp.readline()   
+            continue
+        else:
+            numlines+=1
+            adjMatrix.append(line.split())
+            cnt+=1
+            line = fp.readline()   
+
+
+with open('mst_input.txt', 'w') as the_file:
+
+    for i in range(len(adjMatrix)):
+        for j in range(i+1, len(adjMatrix)):
+            #print(adjMatrix[i][j])
+            if adjMatrix[i][j] != 'x':
+                the_file.write("{} {} {} {}\n".format('e', nodes[i], nodes[j], adjMatrix[i][j]))
