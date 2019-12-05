@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from optparse import OptionParser
 
@@ -8,13 +8,15 @@ usage = "usage: %prog [options] arg"
 parser = OptionParser(usage)
 parser.add_option("-f", "--file", dest="filename", help="read data from FILENAME")
 adjMatrix = []
-
+nodes = []
 (options, args) = parser.parse_args()
 with open(options.filename) as fp:
     line = fp.readline()   
     cnt = 0
     while line:
         if cnt < 5:
+            if cnt == 2:
+                nodes = line.split()
             cnt+=1
             line = fp.readline()   
             continue
@@ -24,7 +26,6 @@ with open(options.filename) as fp:
             cnt+=1
             line = fp.readline()   
 
-print(adjMatrix)
 
 with open('mst_input.txt', 'w') as the_file:
 
@@ -32,6 +33,4 @@ with open('mst_input.txt', 'w') as the_file:
         for j in range(i+1, len(adjMatrix)):
             #print(adjMatrix[i][j])
             if adjMatrix[i][j] != 'x':
-                the_file.write("{} {} {} {}\n".format('e', i, j, adjMatrix[i][j]))
-
-print(numlines)
+                the_file.write("{} {} {} {}\n".format('e', nodes[i], nodes[j], adjMatrix[i][j]))

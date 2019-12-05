@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+
+
+from optparse import OptionParser
+import subprocess
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
+usage = "usage: %prog [options] arg"
+parser = OptionParser(usage)
+parser.add_option("-f", "--file", dest="filename", help="read data from FILENAME")
+
+
+(options, args) = parser.parse_args()
+
+with open(f'{options.filename}.in') as fp:
+    numberVertices = fp.readline()   
+    numberHomes = fp.readline()   
+    line = fp.readline()   
+    nodes = line.split()
+    line = fp.readline()
+    homes = line.split()
+
+subprocess.run(["./mst-solver/mstformatter", "-f", f'{options.filename}.in'])
+
+edges = []
+with open("mst_input.txt") as fp:
+    line = fp.readline()   
+    while line:
+        edge = line.split()
+        edges.append([edge[1], edge[2],float(edge[3])])
+        line = fp.readline()
+
+G = nx.Graph()
+G.add_nodes_from(nodes)
+G.add_weighted_edges_from(edges)
+#plt.subplot(121)
+#nx.draw(G)
+#plt.show()
+totalPath = []
+path = dict(nx.all_pairs_shortest_path(G))
+firstHome = homes[0]
+lastHome = homes[len(homes)-1]
+for i in range(len(homes)):
+    if i == len(homes) - 1:
+        currPath = path[homes[i]][homes[0]]
+        for node in currPath:
+            totalPath.append(f'{node}')
+    else:
+        currPath = path[homes[i]][homes[i+1]]
+        for node in currPath:
+            totalPath.append(f'{node}')
+#clean the path
+prev = None
+for home in totalPath:
+    if home == prev:
+        totalPath.remove(home)
+    prev = home
+
+with open(f'{options.filename}.out') as fp:
+
+
+
+
+
+print(totalPath)
+
+
+
+
+
+
+
