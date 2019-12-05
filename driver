@@ -69,21 +69,6 @@ currPath = path[curr][start]
 for node in currPath:
     totalPath.append(f'{node}')
 
-#for i in range(len(homes)):
-    #nextNode = homes[i]
-#
-    #if i < len(homes) - 1:
-        #print(f'final node{}'')
-        #currPath = path[currNode][nextNode]
-        #for node in currPath:
-            #if node != nextNode:
-                #totalPath.append(f'{node}')
-        #currNode = nextNode 
-    ##else:
-        #currPath = path[currNode][start]
-        #for node in currPath:
-            #totalPath.append(f'{node}')
-
 print(totalPath)
 dropped = []
 dropCounts = 0
