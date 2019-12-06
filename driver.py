@@ -98,6 +98,7 @@ for node in totalPath:
 #Check for repeats of homes one away from a drop point
 for n in range(len(totalPath)-2):
 	if totalPath[n] == totalPath[n+2]:
+		#print("ALL THE ONE CYCLES")
 		#print([totalPath[n],totalPath[n+1],totalPath[n+2]])
 		if(totalPath[n+1] in homes):
 			dropoffs.append([totalPath[n],totalPath[n+1]])
@@ -146,19 +147,57 @@ with open(filePath, 'w') as fp:
         		outputList.append(thisNode)
     #check for drop of that isn't also a home
     for dps in dropoffs:
-        if (dps[0] not in homes and dps[0] not in seen and dps[1] in homes and dps[1] not in seen):
+        if (dps[0] not in homes and dps[1] in homes and dps[1] not in seen):
         	seen.append(dps[0])
         	outputList.append(dps)
+    
+    #check for nodes that can be combined list.index(element)
+    dropNodes=[]
+    for outs in outputList:
+    	if outs[0] not in dropNodes:
+    		dropNodes.append(outs[0])
+    	else:
+    		for k in range(len(outs)):
+    			if k!=0:
+    				for ws in outputList:
+    					if ws[0]==outs[0]:
+    						ws.append(outs[k])
+    		outputList.remove(outs)
 
     # for node in outputList:
     # 	print (node)
+
     dropCounts= len(outputList)
-    #assert dropCounts == int(numberHomes), "didn't drop everyone off"
     fp.write(f'{dropCounts}\n')
     for inserts in outputList:
     	for nodes in inserts:
     		fp.write(nodes+' ')
     	fp.write('\n')
+
+    # print("MY OUTPUT")
+
+    # homesDropped=[]
+    # for out in outputList:
+    # 	for d in range(len(out)):
+    # 		if (d!=0):
+    # 			homesDropped.append(out[d])
+    # 	print(out)
+    # discrep = []
+    # for node in homes:
+    # 	if node not in homesDropped:
+    # 		discrep.append(node)
+    # print("MISSING!!!")
+    # print(discrep)
+
+    # print("all the stupid dropoffs")
+    # for t in dropoffs:
+    # 	print(t)
+    
+    #verify they are all home
+    myDrops=0
+    for line in outputList:
+    	myDrops+=(len(line)-1)
+    assert myDrops == int(numberHomes), "didn't drop everyone off"
 
     # for home in totalPath:
     #     if home in homes and home not in dropped:
