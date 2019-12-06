@@ -96,11 +96,13 @@ for node in totalPath:
 
 
 #Check for repeats of homes one away from a drop point
+takenCareof=[]
 for n in range(len(totalPath)-2):
 	if totalPath[n] == totalPath[n+2]:
 		#print("ALL THE ONE CYCLES")
 		#print([totalPath[n],totalPath[n+1],totalPath[n+2]])
-		if(totalPath[n+1] in homes):
+		if(totalPath[n+1] in homes and totalPath[n] not in takenCareof):
+			takenCareof.append(totalPath[n+1])
 			dropoffs.append([totalPath[n],totalPath[n+1]])
 			newPath[n+1][1]=False
 			newPath[n+2][1]=False
@@ -152,17 +154,29 @@ with open(filePath, 'w') as fp:
         	outputList.append(dps)
     
     #check for nodes that can be combined list.index(element)
+    '''
     dropNodes=[]
     for outs in outputList:
     	if outs[0] not in dropNodes:
     		dropNodes.append(outs[0])
     	else:
-    		for k in range(len(outs)):
-    			if k!=0:
-    				for ws in outputList:
-    					if ws[0]==outs[0]:
+    		for k in range(1, len(outs)):
+    			for ws in outputList:
+    				if ws[0]==outs[0]:
+    					if(outs[k] not in ws):
     						ws.append(outs[k])
     		outputList.remove(outs)
+    '''
+    dropDict = {}
+    for outs in outputList:
+    	drop, homes = outs[0], outs[1:]
+    	if drop not in dropDict:
+    		dropDict[drop] = homes
+    	else:
+    		dropDict[drop] = list(set(dropDict[drop] + homes))
+
+    dropNodes = list(dropDict.keys())
+    outputList = [[drop] + dropDict[drop] for drop in dropDict]
 
     # for node in outputList:
     # 	print (node)
@@ -173,6 +187,16 @@ with open(filePath, 'w') as fp:
     	for nodes in inserts:
     		fp.write(nodes+' ')
     	fp.write('\n')
+
+    # print("total Path")
+    # print(totalPath)
+    # print("MY optimal path")
+    # print(optPath)
+
+    # print("THE HOMES")
+    # for j in homes:
+    # 	print(j)
+
 
     # print("MY OUTPUT")
 
