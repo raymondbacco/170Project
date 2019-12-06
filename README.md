@@ -5,6 +5,7 @@ might break our code in certain places
 also gradescope won't take our file of all the inputs
 so to run our code on the classes inputs
 Please place the all the inputs e.g. "30_50.in" in a directory named /phase_1_inputs/inputs/
+also please make an empty /outputs directory for our outputs to go to
 
 also the mstformater should be inside a directory call mst-solver
 that should solve directory issues
